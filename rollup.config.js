@@ -5,6 +5,7 @@ import resolve from "rollup-plugin-node-resolve";
 import commonjs from "rollup-plugin-commonjs";
 import typescript from "rollup-plugin-typescript2";
 import screeps from "rollup-plugin-screeps";
+import copy from 'rollup-plugin-copy';
 
 let cfg;
 const i = process.argv.indexOf("--dest") + 1;
@@ -27,7 +28,10 @@ export default {
     clean(),
     resolve(),
     commonjs(),
-    typescript({tsconfig: "./tsconfig.json"}),
-    screeps({config: cfg, dryRun: cfg == null})
+    typescript({ tsconfig: "./tsconfig.json" }),
+    copy({
+      "dist/main.js": "/home/jchase/.config/Screeps/scripts/10_0_1_114___21025/default/main.js"
+    })
+    // screeps({config: cfg, dryRun: cfg == null})
   ]
 }
