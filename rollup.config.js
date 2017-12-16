@@ -29,9 +29,9 @@ export default {
     resolve(),
     commonjs(),
     typescript({ tsconfig: "./tsconfig.json" }),
-    copy({
-      "dist/main.js": "/home/jchase/.config/Screeps/scripts/10_0_1_114___21025/default/main.js"
-    })
-    // screeps({config: cfg, dryRun: cfg == null})
+    // copy({
+    //   "dist/main.js": "/home/josh/.config/Screeps/scripts/127_0_0_1___21025/default/main.js"
+    // })
+    screeps({ config: cfg, dryRun: cfg == null })
   ]
 }
