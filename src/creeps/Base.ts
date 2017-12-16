@@ -2,6 +2,11 @@ export class Base {
     protected creep: Creep;
     protected mem: any;
 
+    protected setState(name: string) {
+        this.popState();
+        this.pushState(name);
+    }
+
     protected pushState(name: string) {
         if (this.mem.state == undefined) {
             this.mem.state = [name];
@@ -36,23 +41,35 @@ export class Base {
 
         var stateFunc: any = this[state];
         while (!(stateFunc && stateFunc instanceof Function)) {
-            console.log(`${this.creep.name}: attempt to run invalid state: ${state}`);
+            // console.log(`${this.creep.name}: attempt to run invalid state: ${state}`);
             this.popState();
-            stateFunc = this.getState();
+            state = this.getState();
+            stateFunc = this[state];
         }
 
-        this[state]();
+        // console.log(`${this.creep.name}: running state: ${state} ${stateFunc}`)
+
+        stateFunc();
     }
 
     protected initState() {
+        // console.log(`${this.creep.name}: base initState`);
     }
 
     constructor(creep: Creep) {
         this.creep = creep;
         this.mem = creep.memory;
+
+        if (this.mem.state instanceof String) {
+            this.mem.state = ["initState"];
+        }
     }
 
     protected moveTo(target: any) {
         this.creep.moveTo(target, { visualizePathStyle: { stroke: '#ffaa00' } });
+    }
+
+    public run() {
+        this.runState();
     }
 }

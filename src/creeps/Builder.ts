@@ -7,7 +7,7 @@ export class Builder extends Base {
     }
 
     private enterMoveContainer() {
-        this.mem.state = 'move_container';
+        this.setState('move_container');
         var target = this.creep.room.find(FIND_STRUCTURES, { filter: (s) => s.structureType == STRUCTURE_CONTAINER && !Util.isEmpty(s) })[0];
         if (target == undefined) {
             this.enterMoveHarvest();
@@ -25,14 +25,15 @@ export class Builder extends Base {
         } else if (res == ERR_NOT_IN_RANGE) {
             this.moveTo(target);
         } else {
-            console.log(`unhandled harvest error: ${res}`);
+            // console.log(`unhandled harvest error: ${res}`);
+            this.setState('initState');
         }
     }
 
     private enterMoveHarvest() {
-        this.mem.state = 'move_harvest';
+        this.setState('move_harvest');
         var target: Source = this.creep.room.find(FIND_SOURCES)[0];
-        console.log(`setting target: source${target.id}`);
+        // console.log(`setting target: source${target.id}`);
         this.mem.target = target.id;
         this.moveTo(target);
     }
@@ -45,13 +46,14 @@ export class Builder extends Base {
         } else if (res == ERR_NOT_IN_RANGE) {
             this.moveTo(target);
         } else {
-            console.log(`unhandled harvest error: ${res}`);
+            // console.log(`unhandled harvest error: ${res}`);
+            this.setState('initState');
             // this.creep.suicide();
         }
     }
 
     private enterHarvest() {
-        this.mem.state = "harvest";
+        this.setState("harvest");
     }
 
     private runHarvest() {
@@ -65,7 +67,7 @@ export class Builder extends Base {
     }
 
     private enterMoveBuild() {
-        this.mem.state = 'move_build';
+        this.setState('move_build');
         var site = this.creep.room.find(FIND_CONSTRUCTION_SITES)[0];
         this.mem.target = site.id;
         this.moveTo(site);
@@ -79,13 +81,14 @@ export class Builder extends Base {
         } else if (res == ERR_NOT_IN_RANGE) {
             this.moveTo(target);
         } else {
-            console.log(`unhandled build error: ${res}`);
+            // console.log(`unhandled build error: ${res}`);
+            this.setState('initState');
             // this.creep.suicide();
         }
     }
 
     private enterBuild() {
-        this.mem.state = "build";
+        this.setState("build");
         if (this.creep.carry.energy == 0) {
             this.enterMoveContainer();
         } else {
@@ -101,12 +104,14 @@ export class Builder extends Base {
         }
 
         let target: ConstructionSite = Game.getObjectById(this.mem.target);
-        this.creep.build(target);
+        if (this.creep.build(target) != 0) {
+            this.setState('initState');
+        }
     }
 
     public run() {
-        switch (this.mem.state) {
-            case 'none': {
+        switch (this.getState()) {
+            case 'initState': {
                 this.enterMoveContainer();
                 break;
             }

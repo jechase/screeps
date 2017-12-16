@@ -1,5 +1,11 @@
 export class Util {
     public static isFull(s: any) {
+        if (s instanceof StructureExtension) {
+            let ext = <StructureExtension>s;
+            let ret = ext.energyCapacity == ext.energy;
+            return ret;
+        }
+
         if (s instanceof Spawn) {
             let spawn: Spawn = <Spawn>s;
             let ret = spawn.energy == spawn.energyCapacity;
@@ -16,6 +22,12 @@ export class Util {
     }
 
     public static isEmpty(s: any) {
+        if (s instanceof StructureExtension) {
+            let ext = <StructureExtension>s;
+            let ret = 0 == ext.energy;
+            return ret;
+        }
+
         if (s instanceof Spawn) {
             let spawn: Spawn = <Spawn>s;
             let ret = spawn.energy == 0;

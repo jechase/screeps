@@ -54,7 +54,7 @@ export class SpawnManager {
     }
 
     private static SPAWN_COUNTS: any = {
-        'harvester': 3,
+        'harvester': 5,
         'builder': 3,
         'upgrader': 3,
     };

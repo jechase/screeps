@@ -30,16 +30,16 @@ export class CreepManager {
     private static setState(creep: Creep) {
         var mem: any = creep.memory;
 
-        mem.state = 'none';
+        mem.state = ['initState'];
     }
 
     public static run() {
-        console.log(`Running CreepManager...`);
+        // console.log(`Running CreepManager...`);
         for (let name in Game.creeps) {
             var creep = Game.creeps[name];
-            console.log(`Running creep ${creep.name}`);
+            // console.log(`Running creep ${creep.name}`);
             if (creep.spawning) {
-                console.log(`spawning ${creep.name}`);
+                // console.log(`spawning ${creep.name}`);
                 CreepManager.init(creep);
                 continue;
             }

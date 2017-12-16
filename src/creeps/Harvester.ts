@@ -8,11 +8,11 @@ export class Harvester extends Base {
 
     private findSource() {
         if (this.mem.target == undefined) {
-            console.log(`${this.creep.name} finding new source`);
+            // console.log(`${this.creep.name} finding new source`);
             let sources = this.creep.room.find(FIND_SOURCES_ACTIVE);
             let target: Source = sources[Math.floor(Math.random() * sources.length)];
 
-            console.log(`setting target: source${target.id}`);
+            // console.log(`setting target: source${target.id}`);
             this.mem.target = target.id;
             return target
         } else {
@@ -32,23 +32,24 @@ export class Harvester extends Base {
             target = spawn;
         }
 
-        console.log(`initial target: ${target}, isFull: ${Util.isFull(target)}`);
+        // console.log(`initial target: ${target}, isFull: ${Util.isFull(target)}`);
 
         if (Util.isFull(target)) {
-            console.log(`initial target full, finding new one`);
-            target = this.creep.room.find(FIND_STRUCTURES, { filter: (s) => s.structureType == STRUCTURE_CONTAINER && !Util.isFull(s) })[0];
-            console.log(`new target: ${target}`);
+            // console.log(`initial target full, finding new one`);
+            let targets = this.creep.room.find(FIND_STRUCTURES, { filter: (s) => (s.structureType == STRUCTURE_CONTAINER || s.structureType == STRUCTURE_EXTENSION) && !Util.isFull(s) });
+            target = targets[Math.floor(Math.random() * targets.length)];
+            // console.log(`new target: ${target}`);
         }
 
         this.mem.target = target.id;
 
-        console.log(`target: ${target}`);
+        // console.log(`target: ${target}`);
         return target
     }
 
     private enterMoveHarvest() {
         this.creep.say("moving to harvest!")
-        this.mem.state = 'move_harvest';
+        this.setState('move_harvest');
         this.mem.target = undefined;
         let target: Source = this.findSource();
         this.moveTo(target);
@@ -62,14 +63,15 @@ export class Harvester extends Base {
         } else if (res == ERR_NOT_IN_RANGE) {
             this.moveTo(target);
         } else {
-            console.log(`unhandled harvest error: ${res}`);
+            // console.log(`unhandled harvest error: ${res}`);
+            this.setState('initState');
             // this.creep.suicide();
         }
     }
 
     private enterHarvest() {
         this.creep.say("Harvesting!");
-        this.mem.state = "harvest";
+        this.setState('harvest');
     }
 
     private runHarvest() {
@@ -84,7 +86,7 @@ export class Harvester extends Base {
 
     private enterMoveDrop() {
         this.creep.say("Moving to deposit!");
-        this.mem.state = 'move_drop';
+        this.setState('move_drop');
         this.mem.target = undefined;
         let target = this.findDest();
         this.moveTo(target);
@@ -102,7 +104,7 @@ export class Harvester extends Base {
     }
 
     private enterTransfer() {
-        this.mem.state = "transfer";
+        this.setState("transfer");
     }
 
     private runTransfer() {
@@ -115,8 +117,8 @@ export class Harvester extends Base {
     }
 
     public run() {
-        switch (this.mem.state) {
-            case 'none': {
+        switch (this.getState()) {
+            case 'initState': {
                 this.enterMoveHarvest();
                 break;
             }

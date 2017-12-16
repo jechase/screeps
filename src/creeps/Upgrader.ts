@@ -5,8 +5,32 @@ export class Upgrader extends Base {
         super(creep);
     }
 
+    private enterMoveContainer() {
+        this.setState('move_container');
+        var target = this.creep.room.find(FIND_STRUCTURES, { filter: (s) => s.structureType == STRUCTURE_CONTAINER && !Util.isEmpty(s) })[0];
+        if (target == undefined) {
+            this.enterMoveHarvest();
+        }
+        this.mem.target = target.id;
+        this.moveTo(target);
+    }
+
+    private runMoveContainer() {
+        let target: StructureContainer = Game.getObjectById(this.mem.target);
+        let res = this.creep.withdraw(target, RESOURCE_ENERGY);
+        if (res == 0) {
+            this.enterMoveDrop();
+            return;
+        } else if (res == ERR_NOT_IN_RANGE) {
+            this.moveTo(target);
+        } else {
+            // console.log(`unhandled harvest error: ${res}`);
+            this.setState('initState');
+        }
+    }
+
     private enterMoveHarvest() {
-        this.mem.state = 'move_harvest';
+        this.setState('move_harvest');
         var target: Source = this.creep.room.find(FIND_SOURCES)[0];
         // console.log(`setting target: source${target.id}`);
         this.mem.target = target.id;
@@ -23,11 +47,12 @@ export class Upgrader extends Base {
         } else {
             // console.log(`unhandled harvest error: ${res}`);
             // this.creep.suicide();
+            this.setState('initState');
         }
     }
 
     private enterHarvest() {
-        this.mem.state = "harvest";
+        this.setState("harvest");
     }
 
     private runHarvest() {
@@ -41,7 +66,7 @@ export class Upgrader extends Base {
     }
 
     private enterMoveDrop() {
-        this.mem.state = 'move_drop';
+        this.setState('move_drop');
         var controller = this.creep.room.controller;
         this.mem.target = controller.id;
         this.moveTo(controller);
@@ -57,13 +82,14 @@ export class Upgrader extends Base {
         } else {
             // console.log(`unhandled transfer error: ${res}`);
             // this.creep.suicide();
+            this.setState('initState');
         }
     }
 
     private enterUpgrade() {
-        this.mem.state = "transfer";
+        this.setState("transfer");
         if (this.creep.carry.energy == 0) {
-            this.enterMoveHarvest();
+            this.enterMoveContainer();
         } else {
             let target: StructureController = Game.getObjectById(this.mem.target);
             this.creep.upgradeController(target);
@@ -72,7 +98,7 @@ export class Upgrader extends Base {
 
     private runTransfer() {
         if (this.creep.carry.energy == 0) {
-            this.enterMoveHarvest();
+            this.enterMoveContainer();
             return;
         }
 
@@ -81,9 +107,9 @@ export class Upgrader extends Base {
     }
 
     public run() {
-        switch (this.mem.state) {
-            case 'none': {
-                this.enterMoveHarvest();
+        switch (this.getState()) {
+            case 'initState': {
+                this.enterMoveContainer();
                 break;
             }
             case 'move_harvest': {
