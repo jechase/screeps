@@ -54,9 +54,9 @@ export class SpawnManager {
     }
 
     private static SPAWN_COUNTS: any = {
-        'harvester': 5,
-        'builder': 3,
-        'upgrader': 3,
+        'harvester': 3,
+        'builder': 2,
+        'upgrader': 1,
     };
 
     private static BODY_WORKER = [[WORK, CARRY, MOVE], [WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE]];

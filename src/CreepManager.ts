@@ -46,20 +46,27 @@ export class CreepManager {
 
             var mem: any = creep.memory;
 
-            switch (mem.role) {
-                case "harvester": {
-                    new Harvester(creep).run();
-                    break;
-                }
-                case "upgrader": {
-                    new Upgrader(creep).run();
-                    break;
-                }
-                case "builder": {
-                    new Builder(creep).run();
-                    break;
+            try {
+
+                switch (mem.role) {
+                    case "harvester": {
+                        new Harvester(creep).run();
+                        break;
+                    }
+                    case "upgrader": {
+                        new Upgrader(creep).run();
+                        break;
+                    }
+                    case "builder": {
+                        new Builder(creep).run();
+                        break;
+                    }
                 }
             }
+            catch (err) {
+                console.log("Creep error: " + err);
+            }
+
         }
     }
 }

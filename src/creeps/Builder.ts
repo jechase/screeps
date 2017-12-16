@@ -67,8 +67,8 @@ export class Builder extends Base {
     }
 
     private enterMoveBuild() {
-        this.setState('move_build');
-        var site = this.creep.room.find(FIND_CONSTRUCTION_SITES)[0];
+        this.mem.state = 'move_build';
+        var site = this.creep.room.find(FIND_CONSTRUCTION_SITES).sort((a, b) => { if (a.progress <= b.progress) { return 1; } else { return -1; } })[0];
         this.mem.target = site.id;
         this.moveTo(site);
     }

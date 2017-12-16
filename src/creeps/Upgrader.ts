@@ -1,4 +1,5 @@
 import { Base } from "creeps/Base";
+import { Util } from "utils/Util";
 
 export class Upgrader extends Base {
     constructor(creep: Creep) {
